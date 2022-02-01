@@ -1,0 +1,24 @@
+{
+    "name": "asadbek/octo-laravel",
+    "authors": [
+        {
+            "name": "Asadbekinha",
+            "email": "fayzulloevasadbek@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Asadbek\\OctoLaravel\\OctoServiceProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Asadbek\\OctoLaravel\\": "src/"
+        }
+    }
+}
