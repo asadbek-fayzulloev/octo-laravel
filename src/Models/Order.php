@@ -9,7 +9,7 @@ use JsonSerializable;
 class Order extends Model implements JsonSerializable
 {
     use HasFactory;
-    protected $table = 'order';
+    protected $table = 'bookings';
 
     protected $fillable = [
         'name',
