@@ -29,7 +29,7 @@ class OctoServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->make('Asadbek\OctoLaravel\OctoBaseController');
+        $this->app->make('Asadbek\OctoLaravel\Http\Controllers\OctoBaseController');
         if ($this->app->runningInConsole()) {
 
             $this->publishes([

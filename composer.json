@@ -12,7 +12,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Asadbek\\OctoLaravel\\OctoServiceProvider"
+                "Asadbek\\OctoLaravel\\Providers\\OctoServiceProvider"
             ]
         }
     },
