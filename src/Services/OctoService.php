@@ -15,7 +15,16 @@ class OctoService
     protected Order $order;
     protected User $user;
     protected $payload;
+    public function __construct(Order $order, $payload){
+        $this->order = $order;
+        $this->user = $order->user()->first();
+        $this->url = 'https://secure.octo.uz/';
+        $this->notify_url = 'https://www.google.com';
+        $this->return_url = 'https://www.google.com';
 
+
+        return ;
+    }
     public function prepare(Order $order, User $user)
     {
         $octoTransaction = OctoTransactions::where('order_id', $order->id)->first();
@@ -47,16 +56,6 @@ class OctoService
     }
 
 
-    public function __construct()
-    {
-        $this->url = 'https://secure.octo.uz/';
-        $this->notify_url = 'https://www.google.com';
-        $this->return_url = 'https://www.google.com';
-        $this->user = new User();
-        $this->order = new Order();
-
-
-    }
     public function setMethod($method)
     {
         $this->payload['method'] = $method;
