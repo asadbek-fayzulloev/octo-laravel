@@ -16,14 +16,15 @@ class OctoBaseController extends Controller
     public function __construct(){
         $notify_url = "www.google.com";
         $return_url = 'www.google.com';
-        $this->octoService = new OctoService($notify_url, $return_url);
+        $this->octoService = new OctoService($notify_url, $return_url, config('redirect_after_verify'));
     }
     public function pay(Order $order, OctoRequest $request){
-//        $this->octoService->setDetails($order_id);
-        return $this->octoService->pay($request->type);
+        $this->octoService->setDetails($order->id);
+        $url = $this->octoService->pay($request->type);
+        return redirect()->route($url);
+
     }
     public function verify($order_id, OctoRequest $request){
         $this->octoService->setDetails($order_id);
-        $this->octoService->pay();
     }
 }

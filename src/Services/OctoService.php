@@ -20,12 +20,14 @@ class OctoService
     private CbuUzService $currencyService;
     private $order_price;
     private $payment_uuid;
+    private $redirect_after_verification;
     private OctoResponse $response;
-    public function __construct($notify_url, $return_url){
+    public function __construct($notify_url, $return_url, $redirect_after_verification){
         $this->url = 'https://secure.octo.uz/';
         $this->currencyService = new CbuUzService();
         $this->notify_url = $notify_url;
         $this->return_url = $return_url;
+        $this->redirect_after_verification = $redirect_after_verification;
     }
     private function setPrice(){
         $result = $this->currencyService->getOneByDate("USD", NOW());
@@ -50,16 +52,61 @@ class OctoService
         $this->setMethod('prepare_payment');
         $result = $this->send();
         $this->response = new OctoResponse($result);
+        $url = $this->response->octo_pay_url;
         if($this->response->error==0){
-            $this->createOrder();
-            $this->payment_uuid = $this->response->octo_payment_UUID;
-        }
+            switch ($this->response->status){
+                case "created": {
+                    $this->createOrder();
+                } break;
+                case "confirmed": {
 
+                } break;
+                case "waiting_for_capture": {
+
+                } break;
+                case "succeeded": {
+                    $this->order->paid = $type;
+                    $this->order->save();
+                    $this->createOrder();
+                } break;
+                default: {
+
+                } break;
+            }
+            $this->payment_uuid = $this->response->octo_payment_UUID;
+
+        }
+        return $url;
     }
 
     public function verify()
     {
+        $this->setMethod('prepare_payment');
+        $result = $this->send();
+        $this->response = new OctoResponse($result);
+        $url = $this->response->octo_pay_url;
+        if($this->response->error==0){
+            switch ($this->response->status){
+                case "created": {
+                    $this->createOrder();
+                } break;
+                case "confirmed": {
 
+                } break;
+                case "waiting_for_capture": {
+
+                } break;
+                case "succeeded": {
+                    $this->createOrder();
+                } break;
+                default: {
+
+                } break;
+            }
+            $this->payment_uuid = $this->response->octo_payment_UUID;
+
+        }
+        return redirect()->route($this->redirect_after_verification);
     }
 
     public function notify()
@@ -163,12 +210,9 @@ class OctoService
 
         return $request;
     }
+
     private function createOrder(){
-        $transaction = OctoTransactions::where('shop_transaction_id', $this->order->id)->first();
-        if($transaction){
-            return -1;
-        }
-        $transaction = new OctoTransactions();
+        $transaction = OctoTransactions::where('shop_transaction_id', $this->order->id)->firstOrCreate();
         $transaction->user_id = $this->user->id;
         $transaction->price = $this->order_price;
         $transaction->octo_payment_UUID = $this->response->octo_payment_UUID;

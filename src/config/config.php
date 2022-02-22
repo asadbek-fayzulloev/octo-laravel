@@ -9,4 +9,5 @@ return [
         'transactions' => env('OCTO_TRANSACTIONS_TABLE','octo_transactions'),
         'orders' => env('OCTO_ORDERS_TABLE','orders'),
     ],
+    'redirect_after_verify' => env('OCTO_REDIRECT_AFTER_VERIFY', 'www.google.com')
 ];
