@@ -24,16 +24,18 @@ class OctoService
     private $redirect_after_verification;
     private OctoResponse $response;
 
-    public function __construct($type, $notify_url, $return_url, $redirect_after_verification)
+    public function __construct($notify_url, $return_url, $redirect_after_verification)
     {
         $this->url = 'https://secure.octo.uz/';
         $this->currencyService = new CbuUzService();
-        $this->type = $type;
         $this->notify_url = $notify_url;
         $this->return_url = $return_url;
         $this->redirect_after_verification = $redirect_after_verification;
     }
+    public function setType($type){
+        $this->type = $type;
 
+    }
     private function setPrice()
     {
         $result = $this->currencyService->getOneByDate("USD", NOW());
@@ -127,9 +129,9 @@ class OctoService
         return $this->redirect_after_verification;
     }
 
-    public function notify()
+    public function notify() : string
     {
-        $this->prepare();
+        $url = $this->prepare();
         if ($this->response->error == 0) {
             switch ($this->response->status) {
                 case "created":
@@ -152,6 +154,7 @@ class OctoService
                     break;
             }
         }
+        return $url;
     }
 
     public function validate(Request $request, array $rules, array $messages = [], array $customAttributes = [])
