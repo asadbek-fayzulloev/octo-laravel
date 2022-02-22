@@ -24,7 +24,9 @@ class OctoBaseController extends Controller
         return redirect()->route($url);
 
     }
-    public function verify($order_id, OctoRequest $request){
-        $this->octoService->setDetails($order_id);
+    public function verify(Order $order, OctoRequest $request){
+        $this->octoService->setDetails($order->id);
+        $url = $this->octoService->verify($request->type);
+        return redirect()->route($url);
     }
 }
