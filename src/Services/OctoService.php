@@ -84,7 +84,6 @@ class OctoService
         $this->setMethod('prepare_payment');
         $result = $this->send();
         $this->response = new OctoResponse($result);
-        $url = $this->response->octo_pay_url;
         if($this->response->error==0){
             switch ($this->response->status){
                 case "created": {

@@ -9,7 +9,12 @@ use JsonSerializable;
 class Order extends Model implements JsonSerializable
 {
     use HasFactory;
-    protected $table = 'bookings';
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->table = config('octo.table.orders');
+
+    }
 
     protected $fillable = [
         'name',

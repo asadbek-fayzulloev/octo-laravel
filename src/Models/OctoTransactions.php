@@ -8,8 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class OctoTransactions extends Model
 {
     use HasFactory;
-    protected $table = 'octo_transactions';
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->table = config('octo.table.transactions');
 
+    }
     protected $fillable = [
         'name',
     ];
