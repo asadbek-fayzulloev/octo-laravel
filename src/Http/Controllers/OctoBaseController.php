@@ -7,19 +7,23 @@ use Asadbek\OctoLaravel\Models\OctoTransactions;
 use Asadbek\OctoLaravel\Models\Order;
 use Asadbek\OctoLaravel\Models\User;
 use Asadbek\OctoLaravel\Requests\OctoRequest;
+use Asadbek\OctoLaravel\Services\OctoService;
 use Illuminate\Http\Request;
 
 class OctoBaseController extends Controller
 {
-    public function pay($shop_transaction_id, OctoRequest $request){
-//        $query = 'SELECT * FROM `octo_transactions` WHERE shop_transaction_id = ' . $shop_transaction_id;
-//        $statement = $this->conn->prepare($query);
-//        $statement->execute();
-//        $result = $statement->setFetchMode(\PDO::FETCH_ASSOC);
-//        return $statement->fetch();
-        OctoTransactions::where('shop_transaction_id', $shop_transaction_id)->first();
+    private OctoService $octoService;
+    public function __construct(){
+        $notify_url = "www.google.com";
+        $return_url = 'www.google.com';
+        $this->octoService = new OctoService($notify_url, $return_url);
     }
-    public function verify(OctoRequest $request){
-
+    public function pay(Order $order, OctoRequest $request){
+//        $this->octoService->setDetails($order_id);
+        return $this->octoService->pay($request->type);
+    }
+    public function verify($order_id, OctoRequest $request){
+        $this->octoService->setDetails($order_id);
+        $this->octoService->pay();
     }
 }

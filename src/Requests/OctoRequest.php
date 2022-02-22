@@ -13,7 +13,7 @@ class OctoRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,8 @@ class OctoRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'type' => 'nullable',
+
         ];
     }
 }

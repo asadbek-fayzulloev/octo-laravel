@@ -2,9 +2,11 @@
 
 namespace Asadbek\OctoLaravel\Services;
 
+use Asadbek\OctoLaravel\Http\Classes\OctoResponse;
 use Asadbek\OctoLaravel\Models\OctoTransactions;
 use Asadbek\OctoLaravel\Models\Order;
 use Asadbek\OctoLaravel\Models\User;
+use Asadbek\OctoLaravel\Requests\OctoRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -15,15 +17,25 @@ class OctoService
     protected Order $order;
     protected User $user;
     protected $payload;
-    public function __construct(Order $order, $payload){
+    private CbuUzService $currencyService;
+    private $order_price;
+    private $payment_uuid;
+    private OctoResponse $response;
+    public function __construct($notify_url, $return_url){
+        $this->url = 'https://secure.octo.uz/';
+        $this->currencyService = new CbuUzService();
+        $this->notify_url = $notify_url;
+        $this->return_url = $return_url;
+    }
+    private function setPrice(){
+        $result = $this->currencyService->getOneByDate("USD", NOW());
+        $rate = Arr::get($result, 'rate');
+        $rate = intval($rate/100)*100;
+        $this->order_price = $this->order->price * $rate;
+    }
+    public function setDetails(Order $order){
         $this->order = $order;
         $this->user = $order->user()->first();
-        $this->url = 'https://secure.octo.uz/';
-        $this->notify_url = 'https://www.google.com';
-        $this->return_url = 'https://www.google.com';
-
-
-        return ;
     }
     public function prepare(Order $order, User $user)
     {
@@ -33,11 +45,15 @@ class OctoService
         }
 
     }
-
-    public function pay($type)
+    public function pay($type="Visa")
     {
         $this->setMethod('prepare_payment');
-
+        $result = $this->send();
+        $this->response = new OctoResponse($result);
+        if($this->response->error==0){
+            $this->createOrder();
+            $this->payment_uuid = $this->response->octo_payment_UUID;
+        }
 
     }
 
@@ -60,8 +76,9 @@ class OctoService
     {
         $this->payload['method'] = $method;
     }
-    public function setPayload()
+    public function setPayload(OctoRequest $request)
     {
+        $this->payload = $request;
     }
 
     /**
@@ -96,7 +113,7 @@ class OctoService
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => $this->makeRequest(Arr::get($payload, 'basket')),
+            CURLOPT_POSTFIELDS => $this->makeRequest(),
             CURLOPT_HTTPHEADER => array(
                 'Content-type: application/json'
             ),
@@ -115,8 +132,14 @@ class OctoService
      * @param array $messages
      * @return string
      */
-    protected function makeRequest(array $basket, $payment_methods = [["method"=>"bank_card"]] )
+    protected function makeRequest($payment_methods = [["method"=>"bank_card"]] )
     {
+        $basket = [
+            "position_desc" => "Booking #".$this->order->id,
+            "count"=> 1,
+            "price" => $this->order_price,
+            "supplier_shop_id" => $this->order->id
+        ];
         $request = '{
             "octo_shop_id": ' . config('octo.octo_shop_id') . ',
             "octo_secret": ' . config('octo.octo_secret') . ',
@@ -125,11 +148,11 @@ class OctoService
             "test": ' . config('octo.test', false) . ',
             "init_time": ' . NOW() . ',
             "user_data": ' . json_encode($this->user) . ',
-            "total_sum": 103.33,
+            "total_sum": '. $this->order_price.'
             "currency": ' . config('octo.currency') . ',
                 "tag": "ticket",
                 "description": ' . $this->getDescription() . ',
-              "basket": '.json_encode($basket).',
+              "basket": '.json_encode($this->order).',
               "payment_methods": '.json_encode($payment_methods).'
               "tsp_id":18,
               "return_url": ' . $this->notify_url . ',
@@ -140,7 +163,21 @@ class OctoService
 
         return $request;
     }
-
+    private function createOrder(){
+        $transaction = OctoTransactions::where('shop_transaction_id', $this->order->id)->first();
+        if($transaction){
+            return -1;
+        }
+        $transaction = new OctoTransactions();
+        $transaction->user_id = $this->user->id;
+        $transaction->price = $this->order_price;
+        $transaction->octo_payment_UUID = $this->response->octo_payment_UUID;
+        $transaction->status = $this->response->status;
+        $transaction->octo_pay_url = $this->response->octo_pay_url;
+        $transaction->currency = "UZS";
+        $transaction->save();
+        return 0;
+    }
     private function getDescription()
     {
         return "Payment".$this->order->id;
