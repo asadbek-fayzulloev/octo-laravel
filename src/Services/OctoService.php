@@ -24,12 +24,10 @@ class OctoService
     private $redirect_after_verification;
     private OctoResponse $response;
 
-    public function __construct($notify_url, $return_url, $redirect_after_verification)
+    public function __construct($redirect_after_verification)
     {
         $this->url = 'https://secure.octo.uz/';
         $this->currencyService = new CbuUzService();
-        $this->notify_url = $notify_url;
-        $this->return_url = $return_url;
         $this->redirect_after_verification = $redirect_after_verification;
     }
     public function setType($type){
@@ -49,7 +47,12 @@ class OctoService
         $this->order = $order;
         $this->user = $order->user()->first();
     }
-
+    public function setNotifyUrl($notify_url){
+        $this->notify_url = $notify_url;
+    }
+    public function setReturnUrl($return_url){
+        $this->return_url = $return_url;
+    }
     public function prepare(): string
     {
         $this->setMethod('prepare_payment');

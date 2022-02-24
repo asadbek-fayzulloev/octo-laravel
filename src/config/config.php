@@ -11,5 +11,9 @@ return [
         'users' => env('OCTO_USERS_TABLE','users'),
 
     ],
-    'redirect_after_verify' => env('OCTO_REDIRECT_AFTER_VERIFY', 'www.google.com')
+    'url' => [
+        'redirect_after_verify' => env('OCTO_REDIRECT_AFTER_VERIFY', 'www.google.com'),
+        'return_url' => env('OCTO_REDIRECT_URL', 'www.google.com'),
+        'notify_url' => env('OCTO_NOTIFY_URL', 'www.google.com'),
+    ],
 ];
