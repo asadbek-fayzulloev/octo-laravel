@@ -6,8 +6,8 @@ Route::group([
     'prefix' => 'octo',
     'as' => 'octo.',
 ], function(){
-    Route::get('/pay/{order}', [OctoBaseController::class, 'pay'])->name("pay");
-    Route::get('/verify/{order}', [OctoBaseController::class, 'verify'])->name("verify");
-    Route::get('/notify/{order}', [OctoBaseController::class, 'notify'])->name("notify");
+    Route::get('/pay/{order}/{type}', [OctoBaseController::class, 'pay'])->name("pay");
+    Route::get('/verify/{order}/{type}', [OctoBaseController::class, 'verify'])->name("verify");
+    Route::get('/notify/{order}/{type}', [OctoBaseController::class, 'notify'])->name("notify");
 
 });
