@@ -42,10 +42,10 @@ class OctoService
         $this->order_price = $this->order->price * $rate;
     }
 
-    public function setDetails(Order $order): void
+    public function setDetails($order_id): void
     {
-        $this->order = $order;
-        $this->user = $order->user()->first();
+        $this->order = Order::where('id', $order_id)->first();;
+        $this->user = $this->order->user()->first();
     }
     public function setNotifyUrl($notify_url){
         $this->notify_url = $notify_url;
