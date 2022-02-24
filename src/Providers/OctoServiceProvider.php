@@ -33,7 +33,7 @@ class OctoServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
 
             $this->publishes([
-                __DIR__ . '/config/config.php' => config_path('octo.php'),
+                __DIR__ . '/../config/config.php' => config_path('octo.php'),
             ], 'octo');
 
         }
