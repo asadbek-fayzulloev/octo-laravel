@@ -8,7 +8,6 @@ use JsonSerializable;
 
 class Order extends Model implements JsonSerializable
 {
-    use HasFactory;
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
