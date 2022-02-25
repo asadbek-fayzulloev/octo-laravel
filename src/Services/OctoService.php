@@ -44,7 +44,7 @@ class OctoService
 
     public function setDetails($order_id): void
     {
-        $this->order = Order::where('id', $order_id)->first();;
+        $this->order = Order::where('id', $order_id)->first();
         $this->user = $this->order->user()->first();
     }
     public function setNotifyUrl($notify_url){

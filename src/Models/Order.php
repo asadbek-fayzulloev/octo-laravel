@@ -26,4 +26,7 @@ class Order extends Model implements JsonSerializable
                 "email" => $this->email
             ];
     }
+    public function user(){
+        $this->belongsTo(User::class);
+    }
 }
