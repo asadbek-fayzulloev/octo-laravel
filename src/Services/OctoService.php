@@ -60,7 +60,7 @@ class OctoService
         $result = json_decode($this->send(), true);
         if($result["error"]!=0){
             Log::error("Something went wrong! Octo Error: ".$result["error"]);
-            return redirect($this->return_url);
+            return $this->return_url;
 
         }
         $this->response = new OctoResponse($result);
