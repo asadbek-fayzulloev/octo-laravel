@@ -56,7 +56,7 @@ class OctoService
     public function prepare(): string
     {
         $this->setMethod('prepare_payment');
-        $result = json_decode($this->send());
+        $result = json_decode($this->send(), true);
         $this->response = new OctoResponse($result);
         return $this->response->octo_pay_url;
     }
