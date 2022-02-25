@@ -16,6 +16,13 @@ class OctoTransactions extends Model
     }
     protected $fillable = [
         'name',
+        'shop_transaction_id',
+        'user_id',
+        'booking_id',
+        'price',
+        'currency',
+        'octo_payment_UUID',
+        'status'
     ];
     public function user(){
         return $this->belongsTo(User::class);

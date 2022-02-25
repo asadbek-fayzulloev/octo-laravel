@@ -7,6 +7,7 @@ use Asadbek\OctoLaravel\Models\OctoTransactions;
 use Asadbek\OctoLaravel\Models\Order;
 use Asadbek\OctoLaravel\Models\User;
 use Asadbek\OctoLaravel\Requests\OctoRequest;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -47,6 +48,8 @@ class OctoService
     {
         $this->order = Order::where('id', $order_id)->first();
         $this->user = User::where('id', $this->order->user_id)->first();
+        $this->setPrice();
+
     }
     public function setNotifyUrl($notify_url){
         $this->notify_url = $notify_url;
@@ -61,7 +64,6 @@ class OctoService
         if($result["error"]!=0){
             Log::error("Something went wrong! Octo Error: ".$result["error"]);
             return $this->return_url;
-
         }
         $this->response = new OctoResponse($result);
         return $this->response->octo_pay_url;
@@ -222,7 +224,6 @@ class OctoService
         $err = curl_error($curl);
         Log::info('OctoException' . $err);
         curl_close($curl);
-
         return $response;
     }
 
@@ -232,7 +233,7 @@ class OctoService
      * @param array $messages
      * @return string
      */
-    protected function makeRequest($payment_methods = [["method" => "bank_card"]])
+    protected function makeRequest($payment_methods = [['method' => 'bank_card']])
     {
         $basket = [
             "position_desc" => "Booking #" . $this->order->id,
@@ -240,23 +241,25 @@ class OctoService
             "price" => $this->order_price,
             "supplier_shop_id" => $this->order->id
         ];
+//        dd(Carbon::now()->format('Y-m-d H:m:s.u'));
+        $basket = strval(json_encode($this->order));
         $request = '{
             "octo_shop_id": ' . config('octo.octo_shop_id') . ',
             "octo_secret": ' . config('octo.octo_secret') . ',
             "shop_transaction_id": ' . $this->order->id . ',
             "auto_capture": ' . config('octo.auto_capture') . ',
             "test": ' . config('octo.test', false) . ',
-            "init_time": ' . NOW() . ',
+            "init_time": "' . strval(Carbon::now()->format('Y-m-d H:m:s')) . '",
             "user_data": ' . json_encode($this->user) . ',
-            "total_sum": ' . $this->order_price . '
+            "total_sum": ' . $this->order_price . ',
             "currency": ' . config('octo.currency') . ',
                 "tag": "ticket",
                 "description": ' . $this->getDescription() . ',
-              "basket": ' . json_encode($this->order) . ',
-              "payment_methods": ' . json_encode($payment_methods) . '
+              "basket": ' .  $basket . ',
+              "payment_methods": ' . json_encode($payment_methods) . ',
               "tsp_id":18,
-              "return_url": ' . $this->notify_url . ',
-              "notify_url": ' . $this->return_url . ',
+              "return_url": "' . $this->notify_url . '",
+              "notify_url": "' . $this->return_url . '",
               "language": ' . config('octo.locale', 'en') . ',
               "ttl": 15
             }';

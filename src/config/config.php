@@ -5,6 +5,8 @@ return [
     'octo_shop_id' => env('OCTO_SHOP_ID', ''),
     'octo_secret' =>  env('OCTO_SECRET', ''),
     'locale' => app()->getLocale(),
+    'auto_capture' => env('OCTO_AUTO_CAPTURE', true),
+    'currency' => env('OCTO_CURRENCY', "UZS"),
     'table' => [
         'transactions' => env('OCTO_TRANSACTIONS_TABLE','octo_transactions'),
         'orders' => env('OCTO_ORDERS_TABLE','orders'),
