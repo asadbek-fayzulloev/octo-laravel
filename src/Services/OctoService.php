@@ -63,6 +63,7 @@ class OctoService
         $result = json_decode($this->send(), true);
         if($result["error"]!=0){
             Log::error("Something went wrong! Octo Error: ".$result["error"]);
+            dd($result);
             return $this->return_url;
         }
         $this->response = new OctoResponse($result);
@@ -254,7 +255,7 @@ class OctoService
             "total_sum": ' . $this->order_price . ',
             "currency": ' . config('octo.currency') . ',
                 "tag": "ticket",
-                "description": ' . $this->getDescription() . ',
+                "description": "' . $this->getDescription() . '",
               "basket": ' .  $basket . ',
               "payment_methods": ' . json_encode($payment_methods) . ',
               "tsp_id":18,
@@ -268,9 +269,13 @@ class OctoService
 
     private function createOrder()
     {
-        $transaction = OctoTransactions::where('shop_transaction_id', $this->order->id)->firstOrCreate();
+
+        $transaction = OctoTransactions::where('shop_transaction_id', $this->order->id)->firstOrNew();
+
         $transaction->user_id = $this->user->id;
         $transaction->shop_transaction_id = $this->order->id;
+        $transaction->booking_id = $this->order->id;
+
         $transaction->price = $this->order_price;
         $transaction->octo_payment_UUID = $this->payment_uuid;
         $transaction->status = $this->response->status;
