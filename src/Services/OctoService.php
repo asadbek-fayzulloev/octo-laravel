@@ -236,19 +236,15 @@ class OctoService
      */
     protected function makeRequest($payment_methods = [['method' => 'bank_card']])
     {
-        $basket = [
+        $basket[] = [
             "position_desc" => "Booking #" . $this->order->id,
             "count" => 1,
             "price" => $this->order_price,
-            "supplier_shop_id" => $this->order->id
+//            "supplier_shop_id" => config('octo.octo_shop_id')
         ];
 //        dd(Carbon::now()->format('Y-m-d H:m:s.u'));
-        $basket = strval(json_encode($this->order));
-        $user_data = [
-            "user_id" => $this->user->id,
-            "phone"=> $this->user->phone,
-            "email"=> $this->user->email
-        ];
+        $basket = strval(json_encode($basket));
+
         $request = '{
             "octo_shop_id": ' . config('octo.octo_shop_id') . ',
             "octo_secret": ' . config('octo.octo_secret') . ',
@@ -256,7 +252,7 @@ class OctoService
             "auto_capture": ' . config('octo.auto_capture') . ',
             "test": ' . config('octo.test', false) . ',
             "init_time": "' . strval(Carbon::now()->format('Y-m-d H:m:s')) . '",
-            "user_data": ' . json_encode($user_data) . ',
+            "user_data": '.json_encode($this->user).',
             "total_sum": ' . $this->order_price . ',
             "currency": ' . config('octo.currency') . ',
                 "tag": "ticket",
