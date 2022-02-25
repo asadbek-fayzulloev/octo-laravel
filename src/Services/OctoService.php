@@ -271,8 +271,9 @@ class OctoService
     private function createOrder()
     {
 
-        $transaction = OctoTransactions::where('shop_transaction_id', $this->order->id)->firstOrNew();
-
+        $transaction = OctoTransactions::where('shop_transaction_id', $this->order->id)->first();
+        if(!$transaction)
+            $transaction = new OctoTransactions();
         $transaction->user_id = $this->user->id;
         $transaction->shop_transaction_id = $this->order->id;
         $transaction->booking_id = $this->order->id;
