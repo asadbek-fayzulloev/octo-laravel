@@ -27,6 +27,6 @@ class Order extends Model implements JsonSerializable
             ];
     }
     public function user(){
-        $this->belongsTo(User::class);
+        $this->belongsTo(User::class, 'user_id', 'id');
     }
 }
