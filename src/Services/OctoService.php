@@ -7,6 +7,7 @@ use Asadbek\OctoLaravel\Models\OctoTransactions;
 use Asadbek\OctoLaravel\Models\Order;
 use Asadbek\OctoLaravel\Models\User;
 use Asadbek\OctoLaravel\Requests\OctoRequest;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -57,6 +58,11 @@ class OctoService
     {
         $this->setMethod('prepare_payment');
         $result = json_decode($this->send(), true);
+        if($result["error"]!=0){
+            Log::error("Something went wrong! Octo Error: ".$result["error"]);
+            return redirect()->route($this->return_url)->with('error', "SOMETHING WENT WRONG");
+
+        }
         $this->response = new OctoResponse($result);
         return $this->response->octo_pay_url;
     }
