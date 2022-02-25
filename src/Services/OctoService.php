@@ -244,6 +244,11 @@ class OctoService
         ];
 //        dd(Carbon::now()->format('Y-m-d H:m:s.u'));
         $basket = strval(json_encode($this->order));
+        $user_data = [
+            "user_id" => $this->user->id,
+            "phone"=> $this->user->phone,
+            "email"=> $this->user->email
+        ];
         $request = '{
             "octo_shop_id": ' . config('octo.octo_shop_id') . ',
             "octo_secret": ' . config('octo.octo_secret') . ',
@@ -251,7 +256,7 @@ class OctoService
             "auto_capture": ' . config('octo.auto_capture') . ',
             "test": ' . config('octo.test', false) . ',
             "init_time": "' . strval(Carbon::now()->format('Y-m-d H:m:s')) . '",
-            "user_data": ' . json_encode($this->user) . ',
+            "user_data": ' . json_encode($user_data) . ',
             "total_sum": ' . $this->order_price . ',
             "currency": ' . config('octo.currency') . ',
                 "tag": "ticket",
