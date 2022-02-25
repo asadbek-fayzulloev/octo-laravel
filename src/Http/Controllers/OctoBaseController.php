@@ -15,8 +15,12 @@ class OctoBaseController extends Controller
     private OctoService $octoService;
     public function __construct(){
         $this->octoService = new OctoService(config('url.redirect_after_verify'));
+
     }
     public function pay(Order $order, $type, OctoRequest $request){
+        $this->octoService->setNotifyUrl(config('octo.url.notify_url').$order->id);
+        $this->octoService->setReturnUrl(config('octo.url.return_url').$order->id);
+
         $this->octoService->setDetails($order->id);
         $this->octoService->setType($type);
         $this->octoService->setNotifyUrl(route('octo.notify', ['order' => $order->id, 'type' => $type]));
@@ -26,6 +30,9 @@ class OctoBaseController extends Controller
 
     }
     public function verify(Order $order, $type, OctoRequest $request){
+        $this->octoService->setNotifyUrl(config('octo.url.notify_url').$order->id);
+        $this->octoService->setReturnUrl(config('octo.url.return_url').$order->id);
+
         $this->octoService->setDetails($order->id);
         $this->octoService->setType($type);
         $this->octoService->setNotifyUrl(route('octo.notify',['order' => $order->id, 'type' => $type]));
@@ -34,6 +41,9 @@ class OctoBaseController extends Controller
         return redirect()->route($url);
     }
     public function notify(Order $order, $type, OctoRequest $request){
+        $this->octoService->setNotifyUrl(config('octo.url.notify_url').$order->id);
+        $this->octoService->setReturnUrl(config('octo.url.return_url').$order->id);
+
         $this->octoService->setDetails($order->id);
         $this->octoService->setType($type);
         $url = $this->octoService->notify();
