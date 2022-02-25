@@ -263,7 +263,6 @@ class OctoService
               "language": ' . config('octo.locale', 'en') . ',
               "ttl": 15
             }';
-
         return $request;
     }
 
@@ -271,6 +270,7 @@ class OctoService
     {
         $transaction = OctoTransactions::where('shop_transaction_id', $this->order->id)->firstOrCreate();
         $transaction->user_id = $this->user->id;
+        $transaction->shop_transaction_id = $this->order->id;
         $transaction->price = $this->order_price;
         $transaction->octo_payment_UUID = $this->payment_uuid;
         $transaction->status = $this->response->status;
@@ -282,6 +282,6 @@ class OctoService
 
     private function getDescription()
     {
-        return "Payment" . $this->order->id;
+        return "Payment " . $this->order->id;
     }
 }
