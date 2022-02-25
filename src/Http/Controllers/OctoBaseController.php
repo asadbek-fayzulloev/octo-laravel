@@ -19,7 +19,7 @@ class OctoBaseController extends Controller
     public function pay(Order $order, $type, OctoRequest $request){
         $this->octoService->setDetails($order->id);
         $this->octoService->setType($type);
-        $this->octoService->setNotifyUrl(route('octo.notify'));
+        $this->octoService->setNotifyUrl(route('octo.notify', ['order' => $order->id, 'type' => $type]));
         $this->octoService->setReturnUrl(config('url.return_url'));
         $url = $this->octoService->pay();
         return redirect()->route($url);
@@ -28,7 +28,7 @@ class OctoBaseController extends Controller
     public function verify(Order $order, $type, OctoRequest $request){
         $this->octoService->setDetails($order->id);
         $this->octoService->setType($type);
-        $this->octoService->setNotifyUrl(route('octo.notify'));
+        $this->octoService->setNotifyUrl(route('octo.notify',['order' => $order->id, 'type' => $type]));
         $this->octoService->setReturnUrl(config('url.return_url'));
         $url = $this->octoService->verify();
         return redirect()->route($url);
