@@ -242,10 +242,10 @@ class OctoService
             "price" => $this->order_price,
 //            "supplier_shop_id" => config('octo.octo_shop_id')
         ];
-        $users[] = [
+        $users = [
             "user_id" => $this->user->id,
             "phone" => $this->user->phone,
-            "email" => $this->user->email,
+            "email" => $this->user->email ?? "user@mail.com",
         ];
 //        dd(Carbon::now()->format('Y-m-d H:m:s.u'));
         $basket = strval(json_encode($basket));
