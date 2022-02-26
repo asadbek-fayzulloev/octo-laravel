@@ -243,8 +243,8 @@ class OctoService
 //            "supplier_shop_id" => config('octo.octo_shop_id')
         ];
         $users = [
-            "user_id" => $this->user->id,
-            "phone" => $this->user->phone,
+            "user_id" => $this->user->id ?? 0,
+            "phone" => $this->user->phone ?? "",
             "email" => $this->user->email ?? "user@mail.com",
         ];
 //        dd(Carbon::now()->format('Y-m-d H:m:s.u'));
