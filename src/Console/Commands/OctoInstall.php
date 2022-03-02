@@ -47,7 +47,7 @@ class OctoInstall extends Command
         } else {
             if ($this->shouldOverwriteConfig()) {
                 $this->info('Overwriting configuration file...');
-                $this->publishConfiguration($force = true);
+                $this->publishConfiguration();
             } else {
                 $this->info('Existing configuration was not overwritten');
             }
@@ -55,6 +55,7 @@ class OctoInstall extends Command
         $this->info('Migrating the database tables into your application');
         $this->call('migrate', ['--force' => $this->option('force')]);
         $this->info('Installed Octo');
+        return 0;
     }
 
     private function configExists($fileName)
@@ -78,7 +79,7 @@ class OctoInstall extends Command
         ];
 
         if ($forcePublish === true) {
-            $params['--force'] = false;
+            $params['--force'] = true;
         }
 
         $this->call('vendor:publish', $params);
