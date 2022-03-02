@@ -19,10 +19,10 @@ class CreateOctoTransactionsTable extends Migration
             $table->integer('user_id');
             $table->integer('booking_id');
             $table->double('price');
-            $table->varchar('currency');
-            $table->varchar('octo_payment_UUID')->nullable();
-            $table->varchar('status')->nullable();
-            $table->varchar('octo_pay_url')->nullable();
+            $table->string('currency');
+            $table->string('octo_payment_UUID')->nullable();
+            $table->string('status')->nullable();
+            $table->string('octo_pay_url')->nullable();
             $table->timestamps();
         });
     }

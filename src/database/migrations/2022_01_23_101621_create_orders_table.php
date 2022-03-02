@@ -17,7 +17,7 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->integer('name');
             $table->double('price');
-            $table->varchar('paid')->nullable();
+            $table->string('paid')->nullable();
             $table->timestamps();
         });
     }
