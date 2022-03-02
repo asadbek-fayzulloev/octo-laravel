@@ -2,6 +2,7 @@
 
 namespace Asadbek\OctoLaravel\Providers;
 
+use Asadbek\OctoLaravel\Console\Commands\OctoInstall;
 use Illuminate\Support\ServiceProvider;
 
 class OctoServiceProvider extends ServiceProvider
@@ -35,7 +36,9 @@ class OctoServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__ . '/../config/config.php' => config_path('octo.php'),
             ], 'octo');
-
+            $this->commands([
+                OctoInstall::class,
+            ]);
         }
     }
 }

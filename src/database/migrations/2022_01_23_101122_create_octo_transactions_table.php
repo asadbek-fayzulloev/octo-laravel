@@ -15,6 +15,14 @@ class CreateOctoTransactionsTable extends Migration
     {
         Schema::create('octo_transactions', function (Blueprint $table) {
             $table->id();
+            $table->integer('shop_transaction_id');
+            $table->integer('user_id');
+            $table->integer('booking_id');
+            $table->double('price');
+            $table->varchar('currency');
+            $table->varchar('octo_payment_UUID')->nullable();
+            $table->varchar('status')->nullable();
+            $table->varchar('octo_pay_url')->nullable();
             $table->timestamps();
         });
     }
