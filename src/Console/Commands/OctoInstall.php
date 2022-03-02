@@ -78,7 +78,7 @@ class OctoInstall extends Command
         ];
 
         if ($forcePublish === true) {
-            $params['--force'] = true;
+            $params['--force'] = false;
         }
 
         $this->call('vendor:publish', $params);
